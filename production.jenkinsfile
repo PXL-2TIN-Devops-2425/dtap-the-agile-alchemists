@@ -7,11 +7,9 @@ pipeline {
             }
         }
         stage('deploy prod') {
-            sshagent(['productieserver']) {
                 steps {
-                    sh "ssh -o StrictHostKeyChecking=no ec2-user@44.202.228.234"
+                    sh "docker pull jester01/test"
                     sh "whoami"
-                }
             }
         }
         stage('start prod') {
