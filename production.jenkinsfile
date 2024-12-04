@@ -8,7 +8,7 @@ pipeline {
         stage('deploy prod'){
             sshagent(['productieserver']){
             sh "ssh -o StrictHostKeyChecking=no ec2-user@44.202.228.234"
-sh "whoami"
+            sh "whoami"
         }
         stage('start prod'){
             echo "test"
