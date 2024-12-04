@@ -5,6 +5,12 @@ pipeline {
             steps {
                 echo "good luck..."
             }
+        stage('deploy prod'){
+            
+        }
+        stage('start prod'){
+            
+        }
         }
     }
 }
