@@ -19,7 +19,6 @@ sshagent(['ae718d74-c488-49c5-a58a-451b96d15f6b']) {
     sh "docker pull jester01/test"
     sh "docker run -d"
 }
-                sh "docker run . -t "
             }
         }
     }
