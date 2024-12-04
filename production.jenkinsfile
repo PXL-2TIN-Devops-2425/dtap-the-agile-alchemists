@@ -1,24 +1,29 @@
 pipeline {
     agent any
+
     stages {
-        stage('dtap production') {
+        stage('Deploy Prod') {
             steps {
-                echo "good luck..."
+                script {
+                    // Pull the latest Docker image from Docker Hub
+                    sh 'docker pull jester01/test:latest'
+                }
             }
         }
-        stage('deploy prod') {
-                steps {
-                    sh "docker pull jester01/test"
-                    sh "whoami"
-            }
-        }
-        stage('start prod') {
-                steps{
-sshagent(['ae718d74-c488-49c5-a58a-451b96d15f6b']) {
-    sh "ssh ec2-user@44.202.228.234"
-    sh "docker pull jester01/test"
-    sh "docker run -d"
-}
+        stage('Start Prod') {
+            steps {
+                sshagent(['ae718d74-c488-49c5-a58a-451b96d15f6b']) {
+                    script {
+                        // Start the Docker container on the remote server
+                        sh '''
+                        ssh user@44.204.23.132 << EOF
+                        docker stop test || true
+                        docker rm test || true
+                        docker run -d -p 3000:3000 --name test:latest
+                        EOF
+                        '''
+                    }
+                }
             }
         }
     }
