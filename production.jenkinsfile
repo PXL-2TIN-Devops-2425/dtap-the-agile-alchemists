@@ -4,11 +4,16 @@ pipeline {
     stages {
         stage('Deploy Prod') {
             steps {
-                script {
                     // Pull the latest Docker image from Docker Hub
-                    sh 'docker pull jester01/test:latest'
-                }
-            }
+                     sshagent(['ae718d74-c488-49c5-a58a-451b96d15f6b']) {
+                    script {
+                        // Start the Docker container on the remote server
+                        sh '''
+                        ssh ec2-user@44.204.23.132 << 
+                        docker pull jester01/test:latest
+                        '''
+                    }
+}
         }
         stage('Start Prod') {
             steps {
@@ -16,11 +21,10 @@ pipeline {
                     script {
                         // Start the Docker container on the remote server
                         sh '''
-                        ssh -tt -o StrictHostKeyChecking=no ec2-user@44.204.23.132 << EOF
+                        ssh StrictHostKeyChecking=no ec2-user@44.204.23.132 <<
                         docker stop test || true
                         docker rm test || true
                         docker run -d -p 3000:3000 --name test:latest
-                        EOF
                         '''
                     }
                 }
