@@ -16,7 +16,7 @@ pipeline {
                     script {
                         // Start the Docker container on the remote server
                         sh '''
-                        ssh -t ec2-user@44.204.23.132 << EOF
+                        ssh -tt -o StrictHostKeyChecking=no ec2-user@44.204.23.132 << EOF
                         docker stop test || true
                         docker rm test || true
                         docker run -d -p 3000:3000 --name test:latest
