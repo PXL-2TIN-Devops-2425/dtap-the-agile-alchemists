@@ -5,14 +5,17 @@ pipeline {
             steps {
                 echo "good luck..."
             }
-        stage('deploy prod'){
-            sshagent(['productieserver']){
-            sh "ssh -o StrictHostKeyChecking=no ec2-user@44.202.228.234"
-            sh "whoami"
         }
-}
-        stage('start prod'){
+        stage('deploy prod') {
+            sshagent(['productieserver']) {
+                steps {
+                    sh "ssh -o StrictHostKeyChecking=no ec2-user@44.202.228.234"
+                    sh "whoami"
+                }
+            }
+        }
+        stage('start prod') {
             echo "test"
         }
-        }
+    }
 }
