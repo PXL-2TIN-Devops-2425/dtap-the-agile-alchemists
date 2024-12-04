@@ -14,7 +14,10 @@ pipeline {
         }
         stage('start prod') {
                 steps{
-            echo "test"
+sshagent(['github']) {
+    sh "ssh --o StrictHostKeyChecking=no ec2-user@44.202.228.234"
+}
+                sh "docker run . -t "
             }
         }
     }
