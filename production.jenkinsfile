@@ -13,7 +13,9 @@ pipeline {
             }
         }
         stage('start prod') {
+                steps{
             echo "test"
+            }
         }
     }
 }
