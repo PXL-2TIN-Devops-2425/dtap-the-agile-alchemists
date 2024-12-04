@@ -10,6 +10,7 @@ pipeline {
                         // Start the Docker container on the remote server
                         sh '''
                         ssh -o StrictHostKeyChecking=no ubuntu@34.201.51.102 << EOF
+                        apt install docker
                         docker pull jester01/test:latest
 EOF
                         '''
