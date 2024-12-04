@@ -9,7 +9,7 @@ pipeline {
                     script {
                         // Start the Docker container on the remote server
                         sh '''
-                        ssh -o StrictHostKeyChecking=no ubuntu@3.85.131.250 << EOF
+                        ssh -o StrictHostKeyChecking=no ubuntu@35.173.133.17 << EOF
                         docker pull jester01/test:latest
 EOF
                         '''
@@ -23,7 +23,7 @@ EOF
                     script {
                         // Start the Docker container on the remote server
                         sh '''
-                        ssh -o StrictHostKeyChecking=no ubuntu@3.85.131.250 << EOF
+                        ssh -o StrictHostKeyChecking=no ubuntu@35.173.133.17 << EOF
                         docker stop test || true
                         docker rm test || true
                         docker run -d -p 3000:3000 --name test:latest
