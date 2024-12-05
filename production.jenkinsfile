@@ -1,9 +1,49 @@
 pipeline {
     agent any
+    environment{
+        IP_ADRESS="3.92.8.150"
+    }
     stages {
-        stage('dtap production') {
+        stage('Deploy Prod') {
             steps {
-                echo "good luck..."
+                sshagent(['ae718d74-c488-49c5-a58a-451b96d15f6b']) {
+                    script {
+                        sh '''
+                        ssh -o StrictHostKeyChecking=no ubuntu@${IP_ADRESS} << EOF
+                        # Cleanup existing containers
+                        if [ "$(docker ps -aq)" ]; then
+                            docker rm -vf $(docker ps -aq)
+                        else
+                            echo "No containers to remove."
+                        fi
+
+                        # Cleanup existing images
+                        if [ "$(docker images -aq)" ]; then
+                            docker rmi -f $(docker images -aq)
+                        else
+                            echo "No images to remove."
+                        fi
+
+                        systemctl status docker
+                        docker --version
+                        docker pull jester01/test:latest
+EOF
+                        '''
+                    }
+                }
+            }
+        }
+        stage('Start Prod') {
+            steps {
+                sshagent(['ae718d74-c488-49c5-a58a-451b96d15f6b']) {
+                    script {
+                        sh '''
+                        ssh -o StrictHostKeyChecking=no ubuntu@${IP_ADRESS} << EOF
+                        docker run -d -p 3000:3000 jester01/test:latest
+EOF
+                        '''
+                    }
+                }
             }
         }
     }
