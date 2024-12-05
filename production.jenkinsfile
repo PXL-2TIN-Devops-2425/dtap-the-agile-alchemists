@@ -6,6 +6,7 @@ pipeline {
    stages {
        stage('Deploy Prod') {
            steps {
+               cleanWs()
                sshagent(['PROD_SERVER_KEY']) {
                    script {
                        sh '''
