@@ -42,5 +42,14 @@ EOF'''
                }
            }
        }
+       stage('Test Prod'){
+           steps{
+               script{
+               sh 'sleep 10'
+               responseCode = sh(script: "curl -o /dev/null -s -w '%{http_code}' ${IP_ADRESS}:3000", returnStdout: true).trim()
+               echo responseCode
+               }
+           }
+       }
    }
 }
