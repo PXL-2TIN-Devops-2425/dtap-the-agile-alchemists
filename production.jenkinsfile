@@ -1,15 +1,34 @@
 pipeline {
     agent any
-
+    environment{
+        IP_ADRESS="3.92.8.150"
+    }
     stages {
         stage('Deploy Prod') {
             steps {
                     // Pull the latest Docker image from Docker Hub
                      sshagent(['ae718d74-c488-49c5-a58a-451b96d15f6b']) {
+                         
                     script {
+                         sh '''
+                if [ "$(docker ps -aq)" ]; then
+                    docker rm -vf $(docker ps -aq)
+                else
+                    echo "No containers to remove."
+                fi
+            '''
+            
+            // Remove all images if any exist
+            sh '''
+                if [ "$(docker images -aq)" ]; then
+                    docker rmi -f $(docker images -aq)
+                else
+                    echo "No images to remove."
+                fi
+            '''
                         // Start the Docker container on the remote server
                         sh '''
-                        ssh -o StrictHostKeyChecking=no ubuntu@3.92.8.150 << EOF
+                        ssh -o StrictHostKeyChecking=no ubuntu@${IP_ADRESS} << EOF
                         systemctl status docker
                         docker --version
                         docker pull jester01/test:latest
@@ -25,10 +44,9 @@ EOF
                     script {
                         // Start the Docker container on the remote server
                         sh '''
-                        ssh -o StrictHostKeyChecking=no ubuntu@3.92.8.150 << EOF
-                        docker stop test || true
-                        docker rm test || true
-                        docker run -d -p 3000:3000 --name test:latest
+                        ssh -o StrictHostKeyChecking=no ubuntu@${IP_ADRESS} << EOF
+                        docker run -d -p 3000:3000 jester01/test:latest
+
 EOF
                         '''
                     }
