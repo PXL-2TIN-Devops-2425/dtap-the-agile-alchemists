@@ -1,16 +1,68 @@
 pipeline {
     agent any
-  
+    tools {
+        nodejs "testenvnode"
+    }
+
     stages {
-        stage ('cleanup'){
-            steps{
-                // TODO
+        stage('cleanup') {
+            steps {
+                cleanWs()
             }
         }
+
         stage('fetch app code') {
             steps {
                 // Get some code from a GitHub repository
                 git branch: 'main', url: 'https://github.com/PXL-2TIN-DevOps-Resources/calculator-app-finished.git'
+            }
+        }
+        stage ('Install dependencies'){
+            steps{
+                sh 'npm install'
+            }
+        }
+        stage('unittest'){
+            steps{
+                sh 'npm test'
+                junit '**/junit.xml'
+            }
+        }
+     
+        stage('build artifact'){
+            steps{
+                sh "docker login -u ${env.DOCKER_USERNAME} -p ${env.DOCKER_WACHTWOORD} docker.io"
+                sh 'docker build . -t jester01/test:latest'
+                sh 'docker images'
+            }
+        }
+
+        stage('push artifact'){
+            steps{
+                 sh 'docker push jester01/test:latest'
+            
+            }
+        }
+        
+        stage('deployment'){
+            steps {
+                sh '''
+                # Cleanup existing containers
+                if [ "$(docker ps -aq)" ]; then
+                    docker rm -vf $(docker ps -aq)
+                else
+                    echo "No containers to remove."
+                fi
+
+                # Cleanup existing images
+                if [ "$(docker images -aq)" ]; then
+                    docker rmi -f $(docker images -aq)
+                else
+                    echo "No images to remove."
+                fi
+
+                docker run -d -p 3000:3000 jester01/test:latest
+EOF'''
             }
         }
     }
