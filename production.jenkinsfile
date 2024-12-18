@@ -1,7 +1,7 @@
 pipeline {
    agent any
    environment {
-       IP_ADRESS = "3.92.8.150"
+       IP_ADRESS = "18.204.138.68"
    }
    stages {
        stage('Deploy Prod') {
